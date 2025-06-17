@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Receta y Agregar Ingredientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">📄 Crear Receta y Agregar Ingredientes</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ receta_form.as_p }}
+        <button type="submit" class="btn btn-primary" name="crear_receta">Guardar Receta</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Volver al Dashboard</a>
+    </form>
+
+    {% if receta %}
+    <hr>
+    <h4>🧂 Agregar Ingredientes a: <strong>{{ receta.titulo }}</strong></h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ ingrediente_form.as_p }}
+        <button type="submit" class="btn btn-success" name="agregar_ingrediente">Agregar Ingrediente</button>
+    </form>
+
+    <h5 class="mt-4">Ingredientes actuales:</h5>
+    <ul class="list-group">
+        {% for ingrediente in ingredientes %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ ingrediente.id_ingrediente.nombre }} - {{ ingrediente.cantidad }}
+                <span>
+                    <a href="{% url 'editar_ingrediente' ingrediente.id %}" class="btn btn-sm btn-warning">✏️</a>
+                    <a href="{% url 'eliminar_ingrediente' ingrediente.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar ingrediente?');">🗑️</a>
+                </span>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No hay ingredientes añadidos.</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>📚 Mis Recetas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="text-center mb-4">📖 Mis Recetas</h2>
+
+    <!-- Búsqueda + Botones -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'crear_receta' %}" class="btn btn-success">➕ Nueva Receta</a>
+        
+        <form method="get" class="d-flex" role="search">
+            <input type="text" name="q" class="form-control me-2" placeholder="Buscar por ingrediente" value="{{ query|default:'' }}">
+            <button class="btn btn-outline-primary me-2" type="submit">🔍 Buscar</button>
+            <a href="{% url 'ver_favoritos' %}" class="btn btn-outline-warning">⭐ Ver Favoritos</a>
+        </form>
+    </div>
+
+    {% if recetas %}
+        {% for receta in recetas %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">{{ receta.titulo }}</h4>
+                    <p><strong>Descripción:</strong> {{ receta.descripcion|default:"(Sin descripción)" }}</p>
+                    <p><strong>Categoría:</strong> {{ receta.id_categoria }}</p>
+                    <p><strong>Tiempo de preparación:</strong> {{ receta.tiempo_preparacion }} minutos</p>
+                    <p><strong>Dificultad:</strong> {{ receta.dificultad }}</p>
+                    <p><strong>Pasos:</strong><br> {{ receta.pasos }}</p>
+
+                    <hr>
+                    <h5>🧂 Ingredientes:</h5>
+                    <ul>
+                        {% for ingrediente in receta.ingredientes %}
+                            <li>
+                                {{ ingrediente.id_ingrediente.nombre }} - {{ ingrediente.cantidad }}
+                                <a href="{% url 'editar_ingrediente' ingrediente.id %}" class="text-warning ms-2">✏️</a>
+                                <a href="{% url 'eliminar_ingrediente' ingrediente.id %}" class="text-danger ms-2" onclick="return confirm('¿Eliminar este ingrediente?');">🗑️</a>
+                            </li>
+                        {% empty %}
+                            <li>No hay ingredientes añadidos</li>
+                        {% endfor %}
+                    </ul>
+
+                    <!-- BOTONES de acción -->
+                    <div class="d-flex justify-content-end mt-3">
+                        <a href="{% url 'editar_receta' receta.id %}" class="btn btn-warning btn-sm me-2">✏️ Editar</a>
+                        <a href="{% url 'eliminar_receta' receta.id %}" class="btn btn-danger btn-sm me-2" onclick="return confirm('¿Estás seguro de eliminar esta receta?');">🗑️ Eliminar</a>
+                        <a href="{% url 'agregar_favorito' receta.id %}" class="btn btn-outline-success btn-sm">⭐ Favorito</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center">Aún no has creado recetas.</div>
+    {% endif %}
+</div>
+</body>
+</html>
